@@ -4,21 +4,18 @@ using UnityEngine;
 
 public class RapidFirePowerUp : PowerUpBase
 {
-    TurretController turretController;
+
+    TurretController turretProperties;
     protected override void PowerUp()
     {
-
-
-        if (turretController.FireCooldown == .5)
-        {
-            turretController.FireCooldown = .25f;
-        }
+        turretProperties = FindAnyObjectByType<TurretController>();
+        turretProperties.FireCooldown = 2f;
             
     }
 
     protected override void PowerDown()
     {
-        //turretController.FireCooldown = .5f;
+        turretProperties.FireCooldown = .5f;
         base.PowerDown();
     }
 

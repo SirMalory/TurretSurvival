@@ -4,11 +4,14 @@ using UnityEngine;
 
 public abstract class PowerUpBase : MonoBehaviour
 {
-    [SerializeField] protected float PowerUpDuration = 2f;
+    [SerializeField] private int _health = 2;
+    [SerializeField] protected float PowerUpDuration = 3f;
     [Header("FX")]
     [SerializeField] private AudioClip _deathSound;
     [SerializeField] private AudioClip _hitSound;
 
+    private float _elapsedCooldownTime;
+    private bool _isDisabled = false;
     private BoxCollider powerUpCollider;
     private MeshCollider powerUpVisuals;
 
@@ -19,8 +22,22 @@ public abstract class PowerUpBase : MonoBehaviour
 
     private void Awake()
     {
+        _elapsedCooldownTime = 0;
         powerUpCollider = GetComponent<BoxCollider>();
-        powerUpVisuals = GetComponent<MeshCollider>();
+
+    }
+
+    private void DisablePowerUp()   
+    {
+        if (_isDisabled == false)
+        {
+            _elapsedCooldownTime += Time.deltaTime;
+            if (_elapsedCooldownTime >= PowerUpDuration)
+            {
+                _isDisabled = true;
+                PowerDown();
+            }
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -28,22 +45,21 @@ public abstract class PowerUpBase : MonoBehaviour
         Projectile projectile = other.GetComponent<Projectile>();
         if (projectile != null)
         {
-            powerUpCollider.enabled = !powerUpCollider.enabled;
-            powerUpVisuals.enabled = !powerUpVisuals.enabled;
-            AudioHelper.PlayClip2D(_hitSound, 1, .1f);
-            OnHit();
-            PowerUp();
+            _health -= 1;
+            if (_health <= 0)
+            {
+                powerUpCollider.enabled = !powerUpCollider.enabled;
 
+                AudioHelper.PlayClip2D(_hitSound, 1, .1f);
+                OnHit();
+                PowerUp();
+            }
         }
     }
 
     private void Update()
     {
-        PowerUpDuration -= 1;
-        if (PowerUpDuration <= 0)
-        {
-            PowerDown();
-        }
+        DisablePowerUp();
     }
 
     protected virtual void PowerDown()
