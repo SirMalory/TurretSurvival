@@ -14,7 +14,8 @@ public abstract class PowerUpBase : MonoBehaviour
 
     protected abstract void PowerUp();
     protected abstract void OnHit();
-    protected abstract void PowerDown();
+
+    //protected abstract void PowerDown();
 
     private void Awake()
     {
@@ -34,5 +35,19 @@ public abstract class PowerUpBase : MonoBehaviour
             PowerUp();
 
         }
+    }
+
+    private void Update()
+    {
+        PowerUpDuration -= 1;
+        if (PowerUpDuration <= 0)
+        {
+            PowerDown();
+        }
+    }
+
+    protected virtual void PowerDown()
+    {
+        gameObject.SetActive(false);
     }
 }
