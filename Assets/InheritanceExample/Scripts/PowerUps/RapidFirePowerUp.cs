@@ -9,7 +9,7 @@ public class RapidFirePowerUp : PowerUpBase
     protected override void PowerUp()
     {
         turretProperties = FindAnyObjectByType<TurretController>();
-        turretProperties.FireCooldown = 2f;
+        turretProperties.FireCooldown = .25f;
             
     }
 
